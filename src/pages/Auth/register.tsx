@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
+import { MdMarkEmailRead } from "react-icons/md";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 type Step = 1 | 2 | 3;
 
@@ -29,6 +31,7 @@ type FormErrors = {
 };
 
 export function Register() {
+    const [showAlert, setShowAlert] = useState(false);
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState<Step>(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -120,7 +123,7 @@ export function Register() {
         // Passo 2
         if (currentStep === 2) {
             if (validateStep2()) {
-                setCurrentStep(3);
+                setShowAlert(true);
             }
             return;
         }
@@ -154,13 +157,13 @@ export function Register() {
         }
     }
 
-    function handleBack() {
-        if (currentStep === 3) {
-            setCurrentStep(2);
-            return;
-        }
-        setCurrentStep(1);
-    }
+    // function handleBack() {
+    //     if (currentStep === 3) {
+    //         setCurrentStep(2);
+    //         return;
+    //     }
+    //     setCurrentStep(1);
+    // }
 
     return (
         <>
@@ -353,6 +356,17 @@ export function Register() {
                         )}
 
                         <div className="flex gap-4">
+                            {currentStep === 2 && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="flex-1 mt-6"
+                                    onClick={() => setCurrentStep((prev) => prev - 1)} // Volta para o passo anterior
+                                >
+                                    Voltar
+                                </Button>
+                            )}
+
                             <Button
                                 disabled={isLoading}
                                 type="submit"
@@ -470,6 +484,35 @@ export function Register() {
                     )}
                 </Card>
             </div>
+
+            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Confirme o E-mail</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Você está indo para o último passo.
+                            <br />
+                            Confirme se o e-mail abaixo está correto, pois vamos enviar um código de verificação.
+                            <br />
+                            <br />
+                            <div className="flex items-center gap-2"><span> <MdMarkEmailRead size={20} className="text-emerald-600" /></span><strong className="text-sm text-bold text-black">{formData.email}</strong></div>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <Button variant="outline" onClick={() => setShowAlert(false)}>
+                            Voltar
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setShowAlert(false);
+                                setCurrentStep(3);
+                            }}
+                        >
+                            Continuar
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }
