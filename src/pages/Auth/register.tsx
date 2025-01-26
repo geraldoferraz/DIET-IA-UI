@@ -148,7 +148,7 @@ export function Register() {
             ...prev,
             [id]: value,
         }));
-        // Limpa o erro do campo quando o usuário começa a digitar
+
         if (errors[id as keyof FormErrors]) {
             setErrors((prev) => ({
                 ...prev,
@@ -157,21 +157,9 @@ export function Register() {
         }
     }
 
-    // function handleBack() {
-    //     if (currentStep === 3) {
-    //         setCurrentStep(2);
-    //         return;
-    //     }
-    //     setCurrentStep(1);
-    // }
-
     return (
         <>
             <Helmet title="Cadastro" />
-            <div className="absolute right-4 top-8">
-                <ThemeToggle />
-            </div>
-
             <div className="min-h-screen flex items-center justify-center">
                 <Card className="max-w-[680px] w-full p-12 sm:p-10 rounded-2xl">
                     {/* Título principal (aparece apenas nos steps 1 e 2) */}

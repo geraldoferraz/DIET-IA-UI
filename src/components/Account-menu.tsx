@@ -18,7 +18,7 @@ export function AccountMenu() {
     }
 
     return (
-        <div>
+        <div className="pr-3">
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="flex items-center gap-2 select-none">

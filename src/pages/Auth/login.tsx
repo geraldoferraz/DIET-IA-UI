@@ -1,4 +1,3 @@
-import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,7 +63,7 @@ export function Login() {
             ...prev,
             [id]: value
         }));
-        // Limpa o erro do campo quando o usuário começa a digitar
+
         if (errors[id as keyof FormErrors]) {
             setErrors(prev => ({
                 ...prev,
@@ -76,9 +75,6 @@ export function Login() {
     return (
         <>
             <Helmet title="Login" />
-            <div className="absolute right-4 top-8">
-                <ThemeToggle />
-            </div>
             <div className="min-h-screen flex items-center justify-center">
                 <Card className="max-w-md w-full p-12 sm:p-8 rounded-2xl">
                     <div className="flex justify-between items-center mb-2">

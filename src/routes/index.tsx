@@ -3,6 +3,7 @@ import { AuthLayout } from "@/pages/_layout/auth";
 import { AppLayout } from "@/pages/_layout/app";
 import { Login } from "@/pages/Auth/login";
 import { Register } from "@/pages/Auth/register";
+import { Workouts } from "@/pages/App/workouts/workouts";
 
 export const router = createBrowserRouter([
     {
@@ -13,9 +14,7 @@ export const router = createBrowserRouter([
         path: "/app",
         element: <AppLayout />,
         children: [
-            // { path: "/app", element: <Workouts /> },
-            // { path: "/app/weight", element: <Weight /> },
-            // { path: "/app/statistics", element: <Stats /> },
+            { path: "/app", element: <Workouts /> },
         ],
     },
     {
