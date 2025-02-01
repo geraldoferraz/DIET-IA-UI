@@ -12,6 +12,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { getUserInfo } from "@/api/login";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const loginSchema = z.object({
     email: z.string().email("E-mail inválido"),
@@ -20,6 +22,7 @@ const loginSchema = z.object({
 
 export function Login() {
     const navigate = useNavigate();
+    const setUser = useAuthStore((state) => state.setUser);
 
     const {
         register,
@@ -31,8 +34,18 @@ export function Login() {
 
     const loginMutation = useMutation({
         mutationFn: login,
-        onSuccess: () => {
+        onSuccess: async () => {
             toast.success("Login realizado com sucesso!");
+
+            try {
+                const user = await getUserInfo();
+                console.log("User:", user);
+                setUser(user);
+            } catch (error) {
+                toast.error("Erro ao buscar informações do usuário");
+                console.error("Erro ao buscar informações do usuário:", error);
+            }
+
             navigate('/home');
         },
         onError: (error) => {

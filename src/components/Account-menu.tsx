@@ -3,18 +3,20 @@ import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function AccountMenu() {
     const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState(false);
 
-    const mockUser = {
-        name: 'John Doe',
-        email: 'john@example.com'
-    }
+    const userStore = useAuthStore((state) => state.user);
+    const user = userStore?.user;
+    const clearUser = useAuthStore((state) => state.clearUser);
 
     function handleSignOut() {
-        navigate('/login')
+        clearUser();
+        localStorage.removeItem("auth-storage");
+        navigate('/sign-in')
     }
 
     return (
@@ -22,14 +24,14 @@ export function AccountMenu() {
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="flex items-center gap-2 select-none">
-                        {mockUser.name}
+                        {user?.name}
                         <ChevronDown className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel className="flex flex-col">
-                        <span className="mb-0">{mockUser.name}</span>
-                        <span className="text-xs font-normal text-muted-foreground">{mockUser.email}</span>
+                        <span className="mb-0">{user?.name}</span>
+                        <span className="text-xs font-normal text-muted-foreground">{user?.email}</span>
                     </DropdownMenuLabel>
 
                     <DropdownMenuSeparator />
