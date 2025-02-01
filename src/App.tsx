@@ -10,7 +10,7 @@ import { ThemeProvider } from "./components/theme/theme-provider";
 function App() {
   return (
     <HelmetProvider>
-      <ThemeProvider storageKey="diet-ia-theme" defaultTheme="dark">
+      <ThemeProvider storageKey="diet-ia-theme" defaultTheme="light">
         <Helmet titleTemplate="Diet.ia" />
         <Toaster richColors closeButton />
         <QueryClientProvider client={queryClient}>

@@ -1,75 +1,49 @@
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { login } from "@/api/login";
+import { queryClient } from "@/lib/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-
-type FormErrors = {
-    email?: string;
-    password?: string;
-}
+const loginSchema = z.object({
+    email: z.string().email("E-mail inválido"),
+    password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+});
 
 export function Login() {
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
-    const [errors, setErrors] = useState<FormErrors>({});
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(loginSchema),
     });
 
-    function validateForm() {
-        const newErrors: FormErrors = {};
-
-        if (!formData.email) {
-            newErrors.email = 'E-mail é obrigatório';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'E-mail inválido';
+    const loginMutation = useMutation({
+        mutationFn: login,
+        onSuccess: () => {
+            toast.success("Login realizado com sucesso!");
+            navigate('/home');
+        },
+        onError: (error) => {
+            toast.error("Erro ao fazer login");
+            console.error("Erro ao fazer login:", error);
         }
+    });
 
-        if (!formData.password) {
-            newErrors.password = 'Senha é obrigatória';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Senha deve ter no mínimo 6 caracteres';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }
-
-    function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        setIsLoading(true);
-        setTimeout(() => {
-            console.log("Login:", formData);
-            setIsLoading(false);
-            navigate("/app");
-        }, 1500);
-    }
-
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { id, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [id]: value
-        }));
-
-        if (errors[id as keyof FormErrors]) {
-            setErrors(prev => ({
-                ...prev,
-                [id]: undefined
-            }));
-        }
+    async function onSubmit(data) {
+        loginMutation.mutate(data);
     }
 
     return (
@@ -87,7 +61,7 @@ export function Login() {
                         Acesse seus monitoramentos e acompanhe sua evolução.
                     </p>
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="email">E-mail</Label>
@@ -95,17 +69,10 @@ export function Login() {
                                     id="email"
                                     type="email"
                                     placeholder="Digite seu e-mail"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className={cn(
-                                        errors.email && "border-red-500 focus-visible:ring-red-500"
-                                    )}
+                                    {...register("email")}
+                                    className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")}
                                 />
-                                {errors.email && (
-                                    <span className="text-xs text-red-500">
-                                        {errors.email}
-                                    </span>
-                                )}
+                                {errors.email && <span className="text-xs text-red-500">{errors.email.message}</span>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="password">Senha</Label>
@@ -113,27 +80,20 @@ export function Login() {
                                     id="password"
                                     type="password"
                                     placeholder="Digite sua senha"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className={cn(
-                                        errors.password && "border-red-500 focus-visible:ring-red-500"
-                                    )}
+                                    {...register("password")}
+                                    className={cn(errors.password && "border-red-500 focus-visible:ring-red-500")}
                                 />
-                                {errors.password && (
-                                    <span className="text-xs text-red-500">
-                                        {errors.password}
-                                    </span>
-                                )}
+                                {errors.password && <span className="text-xs text-red-500">{errors.password.message}</span>}
                             </div>
                         </div>
 
                         <Button
-                            disabled={isLoading}
+                            disabled={isSubmitting || loginMutation.isLoading}
                             type="submit"
                             className="w-full h-10 relative overflow-hidden group"
                         >
                             <div className="relative flex items-center justify-center gap-2">
-                                {isLoading ? (
+                                {loginMutation.isLoading ? (
                                     <>
                                         <FaSpinner className="animate-spin h-5 w-5" />
                                         <span>Entrando...</span>
@@ -205,7 +165,7 @@ export function Login() {
                         </div>
                     </div>
 
-                    {isLoading && (
+                    {loginMutation.isLoading && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                             <FaSpinner className="animate-spin text-white w-10 h-10" />
                         </div>

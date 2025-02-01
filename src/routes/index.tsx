@@ -11,10 +11,10 @@ export const router = createBrowserRouter([
         element: <Navigate to="/sign-in" replace />,
     },
     {
-        path: "/app",
+        path: "/",
         element: <AppLayout />,
         children: [
-            { path: "/app", element: <Workouts /> },
+            { path: "/home", element: <Workouts /> },
         ],
     },
     {

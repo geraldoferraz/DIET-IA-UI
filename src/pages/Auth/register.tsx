@@ -1,3 +1,10 @@
+import { useMutation } from "@tanstack/react-query";
+import { register, verifyOtp } from "@/api/register";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, RegisterSchemaType } from "@/schemas/register";
+
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +14,6 @@ import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdMarkEmailRead } from "react-icons/md";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 import {
     InputOTP,
@@ -19,141 +25,162 @@ import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFoo
 
 type Step = 1 | 2 | 3;
 
-type FormErrors = {
-    name?: string;
-    email?: string;
-    password?: string;
-    cpf?: string;
-    phone?: string;
-    age?: string;
-    otp?: string;
-};
-
 export function Register() {
-    const [showAlert, setShowAlert] = useState(false);
     const navigate = useNavigate();
+    const [showAlert, setShowAlert] = useState(false);
     const [currentStep, setCurrentStep] = useState<Step>(1);
     const [isLoading, setIsLoading] = useState(false);
-    const [errors, setErrors] = useState<FormErrors>({});
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        cpf: "",
-        phone: "",
-        age: "",
-        otp: "",
-    });
 
-    function validateStep1() {
-        const newErrors: FormErrors = {};
+    const form = useForm<RegisterSchemaType>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            cpf: "",
+            phone: "",
+            age: "",
+            otp: "",
+        },
+    })
 
-        if (!formData.name) {
-            newErrors.name = "Nome é obrigatório";
-        } else if (formData.name.length < 3) {
-            newErrors.name = "Nome deve ter no mínimo 3 caracteres";
-        }
+    const registerMutation = useMutation({
+        mutationFn: register,
+        onSuccess: () => {
+            setIsLoading(false)
+            toast.success("Código de verificação enviado para seu e-mail.")
+            setCurrentStep(3) // vamos para passo 3 (otp)
+        },
+        onError: (error: any) => {
+            setIsLoading(false)
+            console.error("Erro ao registrar:", error?.response?.data || error.message)
+            const errMsg = error?.response?.data?.error || "Erro ao registrar"
+            toast.error(errMsg)
+        },
+    })
 
-        if (!formData.email) {
-            newErrors.email = "E-mail é obrigatório";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = "E-mail inválido";
-        }
+    const verifyOtpMutation = useMutation({
+        mutationFn: verifyOtp,
+        onSuccess: (data) => {
+            setIsLoading(false)
+            toast.success(`Olá ${data.user.name}, seu cadastro foi concluído com sucesso!`)
+            navigate("/sign-in")
+        },
+        onError: (error: any) => {
+            setIsLoading(false)
+            console.error("Erro ao verificar OTP:", error?.response?.data || error.message)
+            const errMsg = error?.response?.data?.error || "Erro ao verificar OTP"
+            toast.error(errMsg)
+        },
+    })
 
-        if (!formData.password) {
-            newErrors.password = "Senha é obrigatória";
-        } else if (formData.password.length < 6) {
-            newErrors.password = "Senha deve ter no mínimo 6 caracteres";
-        }
+    // function validateStep1() {
+    //     const newErrors: FormErrors = {};
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }
+    //     if (!formData.name) {
+    //         newErrors.name = "Nome é obrigatório";
+    //     } else if (formData.name.length < 3) {
+    //         newErrors.name = "Nome deve ter no mínimo 3 caracteres";
+    //     }
 
-    function validateStep2() {
-        const newErrors: FormErrors = {};
+    //     if (!formData.email) {
+    //         newErrors.email = "E-mail é obrigatório";
+    //     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    //         newErrors.email = "E-mail inválido";
+    //     }
 
-        if (!formData.cpf) {
-            newErrors.cpf = "CPF é obrigatório";
-        } else if (!/^\d{11}$/.test(formData.cpf.replace(/\D/g, ""))) {
-            newErrors.cpf = "CPF inválido";
-        }
+    //     if (!formData.password) {
+    //         newErrors.password = "Senha é obrigatória";
+    //     } else if (formData.password.length < 6) {
+    //         newErrors.password = "Senha deve ter no mínimo 6 caracteres";
+    //     }
 
-        if (!formData.phone) {
-            newErrors.phone = "Telefone é obrigatório";
-        } else if (!/^\d{10,11}$/.test(formData.phone.replace(/\D/g, ""))) {
-            newErrors.phone = "Telefone inválido";
-        }
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // }
 
-        if (!formData.age) {
-            newErrors.age = "Idade é obrigatória";
-        } else if (Number(formData.age) < 18 || Number(formData.age) > 100) {
-            newErrors.age = "Idade deve estar entre 18 e 100 anos";
-        }
+    // function validateStep2() {
+    //     const newErrors: FormErrors = {};
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }
+    //     if (!formData.cpf) {
+    //         newErrors.cpf = "CPF é obrigatório";
+    //     } else if (!/^\d{11}$/.test(formData.cpf.replace(/\D/g, ""))) {
+    //         newErrors.cpf = "CPF inválido";
+    //     }
 
-    function validateStep3() {
-        const newErrors: FormErrors = {};
+    //     if (!formData.phone) {
+    //         newErrors.phone = "Telefone é obrigatório";
+    //     } else if (!/^\d{10,11}$/.test(formData.phone.replace(/\D/g, ""))) {
+    //         newErrors.phone = "Telefone inválido";
+    //     }
 
-        if (!formData.otp) {
-            newErrors.otp = "Código de verificação é obrigatório";
-        } else if (formData.otp.length < 6) {
-            newErrors.otp = "Código de verificação inválido";
-        }
+    //     if (!formData.age) {
+    //         newErrors.age = "Idade é obrigatória";
+    //     } else if (Number(formData.age) < 18 || Number(formData.age) > 100) {
+    //         newErrors.age = "Idade deve estar entre 18 e 100 anos";
+    //     }
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // }
 
-    function handleSubmit(e: React.FormEvent) {
+    // function validateStep3() {
+    //     const newErrors: FormErrors = {};
+
+    //     if (!formData.otp) {
+    //         newErrors.otp = "Código de verificação é obrigatório";
+    //     } else if (formData.otp.length < 6) {
+    //         newErrors.otp = "Código de verificação inválido";
+    //     }
+
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // }
+
+    async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        // Passo 1
+
         if (currentStep === 1) {
-            if (validateStep1()) {
-                setCurrentStep(2);
+            const valid = await form.trigger(["name", "email", "password"])
+            if (valid) {
+                setCurrentStep(2)
             }
-            return;
+            return
         }
 
-        // Passo 2
         if (currentStep === 2) {
-            if (validateStep2()) {
-                setShowAlert(true);
+            const valid = await form.trigger(["cpf", "phone", "age"])
+            if (valid) {
+                setShowAlert(true)
             }
-            return;
+            return
         }
 
-        // Passo 3
-        if (!validateStep3()) {
-            return;
-        }
+        if (currentStep === 3) {
+            const valid = await form.trigger("otp")
+            if (!valid) return
 
-        // Se passou pela validação do passo 3, finaliza o cadastro
-        setIsLoading(true);
-        setTimeout(() => {
-            console.log("Registro:", formData);
-            setIsLoading(false);
-            navigate("/sign-in");
-        }, 1500);
+            setIsLoading(true)
+            const { otp } = form.getValues()
+            verifyOtpMutation.mutate({ otp })
+        }
     }
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { id, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: value,
-        }));
+    function handleConfirmRegister() {
+        setShowAlert(false);
+        setIsLoading(true);
 
-        if (errors[id as keyof FormErrors]) {
-            setErrors((prev) => ({
-                ...prev,
-                [id]: undefined,
-            }));
-        }
+        const data = form.getValues()
+
+        registerMutation.mutate({
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            cpf: data.cpf,
+            phone: data.phone,
+            age: data.age,
+        });
     }
 
     return (
@@ -161,7 +188,6 @@ export function Register() {
             <Helmet title="Cadastro" />
             <div className="min-h-screen flex items-center justify-center">
                 <Card className="max-w-[680px] w-full p-12 sm:p-10 rounded-2xl">
-                    {/* Título principal (aparece apenas nos steps 1 e 2) */}
                     {currentStep !== 3 && (
                         <div className="flex justify-between items-center mb-2">
                             <h1 className="text-2xl font-semibold tracking-tight">
@@ -170,7 +196,6 @@ export function Register() {
                         </div>
                     )}
 
-                    {/* Subtítulo nos steps 1 e 2 */}
                     {currentStep < 3 && (
                         <p className="text-sm text-muted-foreground mb-8">
                             {currentStep === 1
@@ -179,8 +204,7 @@ export function Register() {
                         </p>
                     )}
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* STEP 1 */}
+                    <form onSubmit={onSubmit} className="space-y-6">
                         {currentStep === 1 && (
                             <div className="space-y-4">
                                 <div className="space-y-2 w-96">
@@ -189,14 +213,12 @@ export function Register() {
                                         id="name"
                                         type="text"
                                         placeholder="Digite seu nome"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className={cn(
-                                            errors.name && "border-red-500 focus-visible:ring-red-500"
-                                        )}
+                                        {...form.register("name")}
                                     />
-                                    {errors.name && (
-                                        <span className="text-xs text-red-500">{errors.name}</span>
+                                    {form.formState.errors.name && (
+                                        <span className="text-xs text-red-500">
+                                            {form.formState.errors.name.message}
+                                        </span>
                                     )}
                                 </div>
 
@@ -206,14 +228,12 @@ export function Register() {
                                         id="email"
                                         type="email"
                                         placeholder="Digite seu e-mail"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        className={cn(
-                                            errors.email && "border-red-500 focus-visible:ring-red-500"
-                                        )}
+                                        {...form.register("email")}
                                     />
-                                    {errors.email && (
-                                        <span className="text-xs text-red-500">{errors.email}</span>
+                                    {form.formState.errors.email && (
+                                        <span className="text-xs text-red-500">
+                                            {form.formState.errors.email.message}
+                                        </span>
                                     )}
                                 </div>
 
@@ -223,22 +243,17 @@ export function Register() {
                                         id="password"
                                         type="password"
                                         placeholder="Digite sua senha"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        className={cn(
-                                            errors.password && "border-red-500 focus-visible:ring-red-500"
-                                        )}
+                                        {...form.register("password")}
                                     />
-                                    {errors.password && (
+                                    {form.formState.errors.password && (
                                         <span className="text-xs text-red-500">
-                                            {errors.password}
+                                            {form.formState.errors.password.message}
                                         </span>
                                     )}
                                 </div>
                             </div>
                         )}
 
-                        {/* STEP 2 */}
                         {currentStep === 2 && (
                             <div className="space-y-4">
                                 <div className="space-y-2 w-96">
@@ -247,14 +262,12 @@ export function Register() {
                                         id="cpf"
                                         type="text"
                                         placeholder="Digite seu CPF"
-                                        value={formData.cpf}
-                                        onChange={handleChange}
-                                        className={cn(
-                                            errors.cpf && "border-red-500 focus-visible:ring-red-500"
-                                        )}
+                                        {...form.register("cpf")}
                                     />
-                                    {errors.cpf && (
-                                        <span className="text-xs text-red-500">{errors.cpf}</span>
+                                    {form.formState.errors.cpf && (
+                                        <span className="text-xs text-red-500">
+                                            {form.formState.errors.cpf.message}
+                                        </span>
                                     )}
                                 </div>
 
@@ -262,16 +275,14 @@ export function Register() {
                                     <Label htmlFor="phone">Telefone</Label>
                                     <Input
                                         id="phone"
-                                        type="tel"
+                                        type="text"
                                         placeholder="Digite seu telefone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        className={cn(
-                                            errors.phone && "border-red-500 focus-visible:ring-red-500"
-                                        )}
+                                        {...form.register("phone")}
                                     />
-                                    {errors.phone && (
-                                        <span className="text-xs text-red-500">{errors.phone}</span>
+                                    {form.formState.errors.phone && (
+                                        <span className="text-xs text-red-500">
+                                            {form.formState.errors.phone.message}
+                                        </span>
                                     )}
                                 </div>
 
@@ -281,20 +292,17 @@ export function Register() {
                                         id="age"
                                         type="number"
                                         placeholder="Digite sua idade"
-                                        value={formData.age}
-                                        onChange={handleChange}
-                                        className={cn(
-                                            errors.age && "border-red-500 focus-visible:ring-red-500"
-                                        )}
+                                        {...form.register("age")}
                                     />
-                                    {errors.age && (
-                                        <span className="text-xs text-red-500">{errors.age}</span>
+                                    {form.formState.errors.age && (
+                                        <span className="text-xs text-red-500">
+                                            {form.formState.errors.age.message}
+                                        </span>
                                     )}
                                 </div>
                             </div>
                         )}
 
-                        {/* STEP 3 */}
                         {currentStep === 3 && (
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className="space-y-2 w-96">
@@ -311,15 +319,7 @@ export function Register() {
                                     <InputOTP
                                         maxLength={6}
                                         className="flex gap-2"
-                                        onValueChange={(val) => {
-                                            setFormData((prev) => ({ ...prev, otp: val }));
-                                            if (errors.otp) {
-                                                setErrors((prev) => ({
-                                                    ...prev,
-                                                    otp: undefined,
-                                                }));
-                                            }
-                                        }}
+                                        {...form.register("otp")}
                                     >
                                         <InputOTPGroup>
                                             <InputOTPSlot index={0} />
@@ -333,9 +333,9 @@ export function Register() {
                                             <InputOTPSlot index={5} />
                                         </InputOTPGroup>
                                     </InputOTP>
-                                    {errors.otp && (
-                                        <span className="mt-2 block text-xs text-red-500">
-                                            {errors.otp}
+                                    {form.formState.errors.otp && (
+                                        <span className="text-xs text-red-500">
+                                            {form.formState.errors.otp.message}
                                         </span>
                                     )}
                                 </div>
@@ -348,7 +348,7 @@ export function Register() {
                                     type="button"
                                     variant="outline"
                                     className="flex-1 mt-6"
-                                    onClick={() => setCurrentStep((prev) => prev - 1)} // Volta para o passo anterior
+                                    onClick={() => setCurrentStep(1)}
                                 >
                                     Voltar
                                 </Button>
@@ -482,19 +482,14 @@ export function Register() {
                             Confirme se o e-mail abaixo está correto, pois vamos enviar um código de verificação.
                             <br />
                             <br />
-                            <div className="flex items-center gap-2"><span> <MdMarkEmailRead size={20} className="text-emerald-600" /></span><strong className="text-sm text-bold text-black">{formData.email}</strong></div>
+                            <div className="flex items-center gap-2"><MdMarkEmailRead size={20} className="text-emerald-600" /><strong className="text-sm text-bold text-black">{form.getValues("email")}</strong></div>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <Button variant="outline" onClick={() => setShowAlert(false)}>
                             Voltar
                         </Button>
-                        <Button
-                            onClick={() => {
-                                setShowAlert(false);
-                                setCurrentStep(3);
-                            }}
-                        >
+                        <Button onClick={handleConfirmRegister}>
                             Continuar
                         </Button>
                     </AlertDialogFooter>
