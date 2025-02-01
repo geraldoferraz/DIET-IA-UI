@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { login } from "@/api/login";
-import { queryClient } from "@/lib/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,7 @@ export function Login() {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors, isSubmitting, isLoading },
     } = useForm({
         resolver: zodResolver(loginSchema),
     });
@@ -37,7 +36,7 @@ export function Login() {
             navigate('/home');
         },
         onError: (error) => {
-            toast.error("Erro ao fazer login");
+            toast.error("Email ou senha inválidos");
             console.error("Erro ao fazer login:", error);
         }
     });
@@ -88,12 +87,12 @@ export function Login() {
                         </div>
 
                         <Button
-                            disabled={isSubmitting || loginMutation.isLoading}
+                            disabled={isSubmitting || isLoading}
                             type="submit"
                             className="w-full h-10 relative overflow-hidden group"
                         >
                             <div className="relative flex items-center justify-center gap-2">
-                                {loginMutation.isLoading ? (
+                                {isLoading ? (
                                     <>
                                         <FaSpinner className="animate-spin h-5 w-5" />
                                         <span>Entrando...</span>
@@ -165,7 +164,7 @@ export function Login() {
                         </div>
                     </div>
 
-                    {loginMutation.isLoading && (
+                    {isLoading && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                             <FaSpinner className="animate-spin text-white w-10 h-10" />
                         </div>
