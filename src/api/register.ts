@@ -33,7 +33,7 @@ type VerifyOtpResponse = {
 }
 
 export const verifyOtp = async ({ otp }: { otp: string }): Promise<VerifyOtpResponse> => {
-    console.log("Enviando OTP para API:", otp);
     const response = await api.post<VerifyOtpResponse>('/verify-otp', { otp });
+
     return response.data;
 };

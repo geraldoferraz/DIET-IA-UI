@@ -3,7 +3,8 @@ import { AuthLayout } from "@/pages/_layout/auth";
 import { AppLayout } from "@/pages/_layout/app";
 import { Login } from "@/pages/Auth/login";
 import { Register } from "@/pages/Auth/register";
-import { Workouts } from "@/pages/App/workouts/workouts";
+// import { Workouts } from "@/pages/App/workouts/workouts";
+import { Patients } from "@/pages/App/patients/patients";
 
 export const router = createBrowserRouter([
     {
@@ -14,7 +15,7 @@ export const router = createBrowserRouter([
         path: "/",
         element: <AppLayout />,
         children: [
-            { path: "/home", element: <Workouts /> },
+            { path: "/home", element: <Patients /> },
         ],
     },
     {
