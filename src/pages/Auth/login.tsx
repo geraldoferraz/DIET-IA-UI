@@ -9,11 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
-import { FaSpinner } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { getUserInfo } from "@/api/login";
 import { useAuthStore } from "@/store/useAuthStore";
+import { Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
     email: z.string().email("E-mail inválido"),
@@ -27,7 +27,7 @@ export function Login() {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting, isLoading },
+        formState: { errors },
     } = useForm({
         resolver: zodResolver(loginSchema),
     });
@@ -100,14 +100,14 @@ export function Login() {
                         </div>
 
                         <Button
-                            disabled={isSubmitting || isLoading}
                             type="submit"
                             className="w-full h-10 relative overflow-hidden group"
+                            disabled={loginMutation.isPending}
                         >
                             <div className="relative flex items-center justify-center gap-2">
-                                {isLoading ? (
+                                {loginMutation.isPending ? (
                                     <>
-                                        <FaSpinner className="animate-spin h-5 w-5" />
+                                        <Loader2 className="animate-spin h-5 w-5" />
                                         <span>Entrando...</span>
                                     </>
                                 ) : (
@@ -177,9 +177,9 @@ export function Login() {
                         </div>
                     </div>
 
-                    {isLoading && (
+                    {loginMutation.isPending && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                            <FaSpinner className="animate-spin text-white w-10 h-10" />
+                            <Loader2 className="animate-spin text-white w-10 h-10" />
                         </div>
                     )}
                 </Card>

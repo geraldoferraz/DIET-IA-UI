@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,6 +13,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPatient } from "@/api/patients";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const schema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
@@ -54,7 +55,7 @@ export function CreatePatientDialog() {
         onError: (error) => {
             toast.error("Erro ao cadastrar paciente, verifique se o CPF ou e-mail já estão cadastrados");
             console.error("Erro ao cadastrar paciente:", error);
-        }
+        },
     });
 
     function handleCreatePatient(data) {
@@ -66,9 +67,19 @@ export function CreatePatientDialog() {
         createPatientMutation.mutate(patientData);
     }
 
+    useEffect(() => {
+        if (isOpen) {
+            reset();
+        }
+    }, [isOpen, reset]);
+
     return (
         <>
-            <Button onClick={() => setIsOpen(true)} className="flex items-center text-sm font-bold text-white mb-5">
+            <Button
+                onClick={() => setIsOpen(true)}
+                className="flex items-center text-sm font-bold text-white mb-5"
+                disabled={createPatientMutation.isPending}
+            >
                 Adicionar paciente
                 <FaCirclePlus className="w-6 h-6" />
             </Button>
@@ -108,8 +119,22 @@ export function CreatePatientDialog() {
                         ))}
 
                         <div className="col-span-2 flex justify-end items-center gap-4 mt-4">
-                            <Button type="submit" className="w-full mb-6 text-white font-bold py-3 rounded-lg">
-                                Adicionar paciente <PiPlusCircleBold className="ml-2" />
+                            <Button
+                                type="submit"
+                                className="w-full mb-6 text-white font-bold py-3 rounded-lg"
+                                disabled={createPatientMutation.isPending}
+                            >
+                                {createPatientMutation.isPending ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Cadastrando...
+                                    </>
+                                ) : (
+                                    <>
+                                        Adicionar paciente
+                                        <PiPlusCircleBold className="ml-2" />
+                                    </>
+                                )}
                             </Button>
                         </div>
                     </form>
