@@ -1,16 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Search } from "lucide-react";
 import { FaTrashAlt } from "react-icons/fa";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { PatientDetails } from "./patientDetails";
 import { toast } from "sonner";
 import { queryClient } from "@/lib/react-query";
 import { deletePatient } from "@/api/patients";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface Patient {
     id: string;
@@ -26,6 +25,7 @@ interface Patient {
 }
 
 export function PatientTableRow({ patient }: { patient: Patient }) {
+    const navigate = useNavigate();
     const formattedDate = format(new Date(patient.birthDate), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 
     const deletePatientMutation = useMutation({
@@ -40,22 +40,25 @@ export function PatientTableRow({ patient }: { patient: Patient }) {
         }
     });
 
-
     function handleDeletePatient(id: string) {
         deletePatientMutation.mutate(id);
     }
 
+    const handleNavigateToDetails = () => {
+        navigate(`/patient/${patient.id}`);
+    };
+
     return (
         <TableRow>
             <TableCell>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                            <Search className="w-3 h-3" />
-                        </Button>
-                    </DialogTrigger>
-                    <PatientDetails patient={patient} />
-                </Dialog>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleNavigateToDetails}
+                >
+                    <Search className="w-3 h-3" />
+                    <span className="sr-only">Ver detalhes do paciente</span>
+                </Button>
             </TableCell>
             <TableCell className="font-semibold">{patient.name}</TableCell>
             <TableCell className="font-semibold">{patient.email}</TableCell>

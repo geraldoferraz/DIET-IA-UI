@@ -28,3 +28,11 @@ export const createPatient = async (data: Patient): Promise<Patient> => {
 export const deletePatient = async (id: string): Promise<void> => {
     await api.delete(`/patient/${id}`);
 }
+
+export async function getPatientById(id: string): Promise<Patient> {
+    const response = await api.get(`/patient/${id}`);
+
+    console.log(response.data);
+
+    return response.data;
+}

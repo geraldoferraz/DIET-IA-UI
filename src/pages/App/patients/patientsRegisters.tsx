@@ -3,6 +3,8 @@ import { PatientTableRow } from "./patientTableRow";
 import { findPatients } from "@/api/patients";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
+import { queryClient } from "@/lib/react-query";
 
 interface Patient {
     id: string;
@@ -18,6 +20,13 @@ interface Patient {
 }
 
 export function PatientsRegisters() {
+
+    useEffect(() => {
+        queryClient.prefetchQuery({
+            queryKey: ["patients"],
+            queryFn: findPatients,
+        });
+    }, []);
 
     const { data: patients = [], isLoading } = useQuery({
         queryKey: ["patients"],

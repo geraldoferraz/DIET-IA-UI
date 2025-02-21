@@ -5,6 +5,7 @@ import { Login } from "@/pages/Auth/login";
 import { Register } from "@/pages/Auth/register";
 // import { Workouts } from "@/pages/App/workouts/workouts";
 import { Patients } from "@/pages/App/patients/patients";
+import { PatientDetails } from "@/pages/App/patients/patientDetails";
 
 export const router = createBrowserRouter([
     {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
             { path: "/home", element: <Patients /> },
+            { path: "/patient/:id", element: <PatientDetails /> },
         ],
     },
     {
