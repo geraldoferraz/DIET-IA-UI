@@ -1,7 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
@@ -22,14 +21,6 @@ interface Patient {
     createdAt?: string;
 }
 
-const getInitials = (name: string | undefined) => {
-    if (!name) return "??";
-    const words = name.split(" ");
-    const firstInitial = words[0]?.charAt(0) || "";
-    const lastInitial = words.length > 1 ? words[words.length - 1].charAt(0) : "";
-    return (firstInitial + lastInitial).toUpperCase();
-};
-
 export function PatientDetails() {
     const { id } = useParams();
 
@@ -40,41 +31,11 @@ export function PatientDetails() {
 
     return (
         <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:none]">
-            <div className="p-6 w-full">
-                <h1 className="text-2xl font-bold mb-6">Perfil do Paciente</h1>
-                <Card>
-                    <CardContent className="pt-6">
+            <div className="w-full">
+                    <CardContent>
                         <form className="space-y-6">
-                            <div className="flex items-center gap-4">
-                                {isLoading ? (
-                                    <>
-                                        <Skeleton className="w-16 h-16 rounded-full" />
-                                        <div className="space-y-2">
-                                            <Skeleton className="h-5 w-24" />
-                                            <Skeleton className="h-4 w-48" />
-                                        </div>
-                                        <Skeleton className="h-10 w-16" />
-                                    </>
-                                ) : (
-                                    <>
-                                        <Avatar className="w-16 h-16">
-                                            <AvatarImage src="" alt="Avatar" />
-                                            <AvatarFallback>
-                                                {getInitials(patient?.name)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <h3 className="font-medium">Your avatar</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                PNG or JPG less than 500px in width and height.
-                                            </p>
-                                        </div>
-                                        <Button type="button" variant="secondary">Add</Button>
-                                    </>
-                                )}
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-6">
                                 {[
                                     { label: "Name", name: "name", type: "text", value: patient?.name },
                                     { label: "Email", name: "email", type: "email", value: patient?.email },
@@ -102,7 +63,7 @@ export function PatientDetails() {
                                 ))}
                             </div>
 
-                            <div className="flex justify-end items-center gap-6 pt-6">
+                            <div className="flex justify-end items-center gap-6 pt-4">
                                 {isLoading ? (
                                     <>
                                         <Skeleton className="h-10 w-24 mt-3" />
@@ -127,7 +88,6 @@ export function PatientDetails() {
                             </div>
                         </form>
                     </CardContent>
-                </Card>
             </div>
         </div>
     );

@@ -45,7 +45,7 @@ export function PatientTableRow({ patient }: { patient: Patient }) {
     }
 
     const handleNavigateToDetails = () => {
-        navigate(`/patient/${patient.id}`);
+        navigate(`/profile/${patient.id}`);
     };
 
     return (
