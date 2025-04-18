@@ -1,5 +1,5 @@
+import { MealPlan, Patient } from '@/lib/data';
 import { useState } from 'react';
-import { Patient, MealPlan } from '@/lib/data';
 import { toast } from 'sonner';
 
 export function usePatientProfile(initialPatient: Patient) {

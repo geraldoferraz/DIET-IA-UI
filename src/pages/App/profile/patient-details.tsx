@@ -1,33 +1,16 @@
-import { useNavigate } from "react-router-dom";
-import { User2, ClipboardList, History } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePatientProfile } from "@/hooks/usePatientProfile";
 import { mockPatients } from "@/mocks/patient";
-import { PatientHeader } from "./components/PatientHeader";
+import { ClipboardList, History, User2 } from "lucide-react";
 import { PatientDetails } from "../patients/patientDetails";
-import { MealPlansList } from "./components/MealPlansList";
-import AddPatientDialog from "./components/AddPatientDialog";
-import AddMealPlanDialog from "./components/AddMealPlanDialog";
-import DeleteMealPlanDialog from "./components/DeleteMealPlanDialog";
+import { PatientHeader } from "./PatientHeader";
 
 export default function PatientProfile() {
-    const navigate = useNavigate();
     const {
         patient,
-        mealPlans,
-        editPatientOpen,
-        addMealPlanOpen,
-        mealPlanToEdit,
-        mealPlanToDelete,
         setEditPatientOpen,
         setAddMealPlanOpen,
-        setMealPlanToEdit,
-        handleDeleteDialogChange,
-        handleEditPatient,
-        handleMealPlanSave,
-        handleDeleteMealPlan,
-        confirmDeleteMealPlan,
     } = usePatientProfile(mockPatients[0]);
 
     return (
@@ -74,45 +57,10 @@ export default function PatientProfile() {
                             {/* <TabsContent value="anamnese" className="pt-6">
                                 <Anamnese />
                             </TabsContent> */}
-
-                            <TabsContent value="mealPlans" className="pt-6">
-                                <MealPlansList
-                                    mealPlans={mealPlans}
-                                    onAddPlan={() => setAddMealPlanOpen(true)}
-                                    onEditPlan={(id) => {
-                                        const plan = mealPlans.find(p => p.id === id);
-                                        setMealPlanToEdit(plan);
-                                        setAddMealPlanOpen(true);
-                                    }}
-                                    onDeletePlan={handleDeleteMealPlan}
-                                    onViewPlan={(id) => navigate(`/meal-plan/${id}`)}
-                                />
-                            </TabsContent>
                         </Tabs>
                     </div>
                 </Card>
             </div>
-
-            <AddPatientDialog
-                open={editPatientOpen}
-                onOpenChange={setEditPatientOpen}
-                onSave={handleEditPatient}
-                patientToEdit={patient}
-            />
-
-            <AddMealPlanDialog
-                patientId={patient.id}
-                open={addMealPlanOpen}
-                onOpenChange={setAddMealPlanOpen}
-                onSave={handleMealPlanSave}
-                mealPlanToEdit={mealPlanToEdit}
-            />
-
-            <DeleteMealPlanDialog
-                open={!!mealPlanToDelete}
-                onOpenChange={handleDeleteDialogChange}
-                onConfirm={confirmDeleteMealPlan}
-            />
         </div>
     );
 }

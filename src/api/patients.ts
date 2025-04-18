@@ -14,7 +14,7 @@ type Patient = {
 }
 
 export const findPatients = async (): Promise<Patient[]> => {
-    const response = await api.get('/patients');
+    const response = await api.get('/patient');
 
     return response.data;
 }

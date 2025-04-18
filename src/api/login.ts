@@ -10,11 +10,11 @@ type LoginResponse = {
 }
 
 export const login = async (data: RegisterData): Promise<LoginResponse> => {
-    const response = await api.post<LoginResponse>('/login', data);
+    const response = await api.post<LoginResponse>('/auth/login', data);
     return response.data;
 }
 
 export const getUserInfo = async (): Promise<{ id: string; name: string; email: string }> => {
-    const response = await api.get('/profile');
+    const response = await api.get('/user/profile');
     return response.data;
 }
