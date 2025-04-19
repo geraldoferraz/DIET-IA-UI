@@ -14,10 +14,8 @@ export const login = async (data: RegisterData): Promise<LoginResponse> => {
     return response.data;
 }
 
-export const getUserInfo = async (): Promise<{ id: string; name: string; email: string }> => {
+export const getUserInfo = async (): Promise<{ id: string; name: string; email: string; role: string }> => {
     const response = await api.get('/user/profile');
-
-    console.log(response.data, 'response.data');
 
     return response.data;
 }

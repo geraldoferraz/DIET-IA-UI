@@ -7,6 +7,7 @@ import { CreatePassword } from "@/pages/Auth/create-password/create-password";
 import { Login } from "@/pages/Auth/login";
 import { Register } from "@/pages/Auth/register";
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import { ProtectedRoute } from "./protectedRoutes";
 
 export const router = createBrowserRouter([
     {
@@ -17,8 +18,22 @@ export const router = createBrowserRouter([
         path: "/",
         element: <AppLayout />,
         children: [
-            { path: "/home", element: <Patients /> },
-            { path: "/profile/:id", element: <PatientProfile />},
+            {
+                path: "/home",
+                element: (
+                    <ProtectedRoute allowedRoles={["user"]}>
+                        <Patients />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "/profile/:id",
+                element: (
+                    <ProtectedRoute allowedRoles={["patient"]}>
+                        <PatientProfile />
+                    </ProtectedRoute>
+                )
+            },
             { path: "/patient/:id", element: <PatientDetails /> },
         ],
     },
@@ -30,5 +45,9 @@ export const router = createBrowserRouter([
             { path: "/sign-up", element: <Register /> },
             { path: "/create-password", element: <CreatePassword /> },
         ],
+    },
+    {
+        path: "/unauthorized",
+        element: <div>Você não tem permissão para acessar esta página.</div>,
     },
 ]);

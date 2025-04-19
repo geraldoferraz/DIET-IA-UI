@@ -1,19 +1,18 @@
-import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { login } from "@/api/login";
-import { toast } from "sonner";
+import { getUserInfo, login } from "@/api/login";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Helmet } from "react-helmet-async";
-import { Link, useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { getUserInfo } from "@/api/login";
 import { useAuthStore } from "@/store/useAuthStore";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const loginSchema = z.object({
     email: z.string().email("E-mail inválido"),
@@ -39,14 +38,20 @@ export function Login() {
 
             try {
                 const user = await getUserInfo();
-                console.log("User:", user);
-                setUser(user);
+                setUser(user.user);
+
+                // if (user.role === "patient") {
+                //     navigate('/home');
+                // } else {
+                //     navigate('/');
+                // }
+
+                navigate('/home');
+
             } catch (error) {
                 toast.error("Erro ao buscar informações do usuário");
                 console.error("Erro ao buscar informações do usuário:", error);
             }
-
-            navigate('/home');
         },
         onError: (error) => {
             toast.error("Email ou senha inválidos");

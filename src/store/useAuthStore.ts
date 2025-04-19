@@ -1,14 +1,7 @@
 import { create } from "zustand"; //funcao que cria o estado global
 import { persist } from "zustand/middleware"; //salva os dados no localstorage, mesmo apos o refresh
 import { getUserInfo } from "../api/login";
-
-interface User {
-    user: {
-        id: string;
-        name: string;
-        email: string;
-    }
-}
+import { User } from "../types/User";
 
 interface AuthState {
     user: User | null;
@@ -29,7 +22,7 @@ export const useAuthStore = create<AuthState>()(
             fetchUser: async () => {
                 try {
                     const userData = await getUserInfo();
-                    set({ user: { user: userData } });
+                    set({ user: userData as User });
                 } catch (error) {
                     console.error("User not found:", error);
                 }
