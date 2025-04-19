@@ -5,11 +5,11 @@ import { Patient } from "@/lib/data";
 import { useQuery } from "@tanstack/react-query";
 import { ClipboardList, History, User2 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { AnamnesePage } from "../anamnese/anamnese";
 import { PatientDetails } from "../patients/patientDetails";
 import { PatientHeader } from "./PatientHeader";
 
 export default function PatientProfile() {
-
     const { id } = useParams();
 
     const { data: patient, isLoading } = useQuery<Patient>({
@@ -56,9 +56,9 @@ export default function PatientProfile() {
                                 <PatientDetails />
                             </TabsContent>
 
-                            {/* <TabsContent value="anamnese" className="pt-6">
-                                <Anamnese />
-                            </TabsContent> */}
+                            <TabsContent value="anamnese" className="pt-6">
+                                <AnamnesePage patientId={id as string} page={1} itemsPerPage={6} />
+                            </TabsContent>
                         </Tabs>
                     </div>
                 </Card>
