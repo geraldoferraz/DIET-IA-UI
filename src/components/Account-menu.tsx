@@ -1,16 +1,16 @@
+import { useAuthStore } from "@/store/useAuthStore";
 import { Building, ChevronDown, LogOut } from "lucide-react";
-import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/useAuthStore";
+import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 export function AccountMenu() {
     const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState(false);
 
     const userStore = useAuthStore((state) => state.user);
-    const user = userStore?.user;
+    const user = userStore;
     const clearUser = useAuthStore((state) => state.clearUser);
 
     function handleSignOut() {
