@@ -1,10 +1,10 @@
 import { Home } from "lucide-react";
-import { NavLink } from "./Nav-link";
-import { ThemeToggle } from "./theme/theme-toggle";
-import { AccountMenu } from "./Account-menu";
-import { Separator } from "./ui/separator";
 import { IoStatsChart } from "react-icons/io5";
 import { RiMentalHealthLine } from "react-icons/ri";
+import { AccountMenu } from "./Account-menu";
+import { NavLink } from "./Nav-link";
+import { ThemeToggle } from "./theme/theme-toggle";
+import { Separator } from "./ui/separator";
 
 export function Header() {
     return (
@@ -23,9 +23,9 @@ export function Header() {
                         Home
                     </NavLink>
 
-                    <NavLink to="/nutrition">
+                    <NavLink to="/dashboard">
                         <IoStatsChart className="h-4 w-4" />
-                        Nutrition
+                        Dashboard
                     </NavLink>
                 </nav>
 

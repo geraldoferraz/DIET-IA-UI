@@ -1,5 +1,6 @@
 import { AppLayout } from "@/pages/_layout/app";
 import { AuthLayout } from "@/pages/_layout/auth";
+import { Dashboard } from "@/pages/App/dashboard/dashboard";
 import { PatientDetails } from "@/pages/App/patients/patientDetails";
 import { Patients } from "@/pages/App/patients/patients";
 import PatientProfile from "@/pages/App/profile/patient-details";
@@ -43,6 +44,14 @@ export const router = createBrowserRouter([
                     </ProtectedRoute>
                 )
             },
+            {
+                path: "/dashboard",
+                element: (
+                    <ProtectedRoute allowedRoles={["user"]}>
+                        <Dashboard />
+                    </ProtectedRoute>
+                )
+            }
         ],
     },
     {

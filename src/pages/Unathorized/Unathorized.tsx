@@ -11,7 +11,7 @@ export function Unathorized() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <Card className="max-w-md w-full p-12 text-center">
                 <div className="space-y-6">
                     <ShieldX className="h-12 w-12 mx-auto text-rose-500" />
