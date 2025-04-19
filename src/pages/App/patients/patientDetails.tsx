@@ -1,12 +1,12 @@
-import { Link, useParams } from "react-router-dom";
+import { getPatientById } from "@/api/patients";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQuery } from "@tanstack/react-query";
-import { getPatientById } from "@/api/patients";
-import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
 interface Patient {
     id: string;

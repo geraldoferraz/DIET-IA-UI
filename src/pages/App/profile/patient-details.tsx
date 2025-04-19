@@ -1,28 +1,30 @@
+import { getPatientById } from "@/api/patients";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePatientProfile } from "@/hooks/usePatientProfile";
-import { mockPatients } from "@/mocks/patient";
+import { Patient } from "@/lib/data";
+import { useQuery } from "@tanstack/react-query";
 import { ClipboardList, History, User2 } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { PatientDetails } from "../patients/patientDetails";
 import { PatientHeader } from "./PatientHeader";
 
 export default function PatientProfile() {
-    const {
-        patient,
-        setEditPatientOpen,
-        setAddMealPlanOpen,
-    } = usePatientProfile(mockPatients[0]);
+
+    const { id } = useParams();
+
+    const { data: patient, isLoading } = useQuery<Patient>({
+        queryKey: ['patient', id],
+        queryFn: () => getPatientById(id as string),
+    });
 
     return (
         <div className="min-h-screen bg-background">
             <div className="container mx-auto px-4 py-6">
-
                 <Card className="w-full mb-6">
                     <div className="px-6 py-6">
                         <PatientHeader
-                            patient={patient}
-                            onEdit={() => setEditPatientOpen(true)}
-                            onAddMealPlan={() => setAddMealPlanOpen(true)}
+                            patient={patient as Patient}
+                            isLoading={isLoading}
                         />
 
                         <Tabs defaultValue="profile" className="mt-6">

@@ -1,17 +1,5 @@
 import { api } from "@/lib/axios";
-
-type Patient = {
-    id: string;
-    name: string;
-    email: string;
-    cpf: string;
-    phone: string;
-    birthDate: string;
-    weight?: number;
-    height?: number;
-    address?: string;
-    createdAt?: string;
-}
+import { Patient } from "@/lib/data";
 
 export const findPatients = async (): Promise<Patient[]> => {
     const response = await api.get('/patient');

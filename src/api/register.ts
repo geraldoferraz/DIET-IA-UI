@@ -15,7 +15,7 @@ type RegisterResponse = {
 }
 
 export const register = async (data: RegisterData): Promise<RegisterResponse> => {
-    const response = await api.post<RegisterResponse>('/register', {
+    const response = await api.post<RegisterResponse>('/auth/register', {
         ...data,
         age: Number(data.age),
     });
@@ -33,7 +33,7 @@ type VerifyOtpResponse = {
 }
 
 export const verifyOtp = async ({ otp }: { otp: string }): Promise<VerifyOtpResponse> => {
-    const response = await api.post<VerifyOtpResponse>('/verify-otp', { otp });
+    const response = await api.post<VerifyOtpResponse>('/auth/verify-otp', { otp });
 
     return response.data;
 };

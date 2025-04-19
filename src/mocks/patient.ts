@@ -11,5 +11,4 @@ export const mockPatients = [
     createdAt: new Date(),
     updatedAt: new Date()
   },
-  // ... outros pacientes mockados
-]; 
+];

@@ -1,15 +1,15 @@
+import { deletePatient } from "@/api/patients";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
-import { Search } from "lucide-react";
-import { FaTrashAlt } from "react-icons/fa";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { queryClient } from "@/lib/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { toast } from "sonner";
-import { queryClient } from "@/lib/react-query";
-import { deletePatient } from "@/api/patients";
-import { useMutation } from "@tanstack/react-query";
+import { Loader2, Search } from "lucide-react";
+import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface Patient {
     id: string;
@@ -81,7 +81,7 @@ export function PatientTableRow({ patient }: { patient: Patient }) {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeletePatient(patient.id)}>Confirmar</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleDeletePatient(patient.id)} disabled={deletePatientMutation.isPending}>{deletePatientMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirmar"}</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
