@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { FormValues } from "@/types/Anamnese";
 import { useQuery } from "@tanstack/react-query";
+import { X } from "lucide-react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { PatientHeader } from "../profile/PatientHeader";
@@ -54,9 +56,19 @@ export function CreateAnamnese() {
 
     return (
         <div className="p-6 space-y-6">
-            <PatientHeader patient={patient} isLoading={isLoadingPatient} />
-
             <Card className="p-6">
+                <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                        <PatientHeader patient={patient} isLoading={isLoadingPatient} />
+                    </div>
+                        <Button className="flex items-center gap-2" variant="outline" type="button" onClick={() => navigate(-1)}>
+                            Cancelar
+                            <X className="w-4 h-4 mr-2" />
+                        </Button>
+                    </div>
+                    <Separator className="mb-8 mt-2" />
+                </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <div className="grid grid-cols-2 gap-6">
