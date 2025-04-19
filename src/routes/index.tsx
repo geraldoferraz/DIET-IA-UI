@@ -3,6 +3,7 @@ import { AuthLayout } from "@/pages/_layout/auth";
 import { PatientDetails } from "@/pages/App/patients/patientDetails";
 import { Patients } from "@/pages/App/patients/patients";
 import PatientProfile from "@/pages/App/profile/patient-details";
+import { CreatePassword } from "@/pages/Auth/create-password/create-password";
 import { Login } from "@/pages/Auth/login";
 import { Register } from "@/pages/Auth/register";
 import { createBrowserRouter, Navigate } from "react-router-dom";
@@ -27,6 +28,7 @@ export const router = createBrowserRouter([
         children: [
             { path: "/sign-in", element: <Login /> },
             { path: "/sign-up", element: <Register /> },
+            { path: "/create-password", element: <CreatePassword /> },
         ],
     },
 ]);

@@ -32,7 +32,11 @@ export const deletePatient = async (id: string): Promise<void> => {
 export async function getPatientById(id: string): Promise<Patient> {
     const response = await api.get(`/patient/${id}`);
 
-    console.log(response.data);
+    return response.data;
+}
+
+export async function createPassword(data: { email: string; cpf: string; password: string }): Promise<void> {
+    const response = await api.post('/patient/create-password', data);
 
     return response.data;
 }
