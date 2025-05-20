@@ -1,10 +1,12 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PatientTableRow } from "./patientTableRow";
 import { findPatients } from "@/api/patients";
-import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { queryClient } from "@/lib/react-query";
+import { Player } from "@lottiefiles/react-lottie-player";
+import { useQuery } from "@tanstack/react-query";
+import { UserX2 } from "lucide-react";
+import { useEffect } from "react";
+import searchAnimation from "../../../animation/searchAnimation.json";
+import { PatientTableRow } from "./patientTableRow";
 
 interface Patient {
     id: string;
@@ -33,6 +35,30 @@ export function PatientsRegisters() {
         queryFn: findPatients,
     });
 
+    if (isLoading) {
+        return (
+            <div className="border rounded-md">
+                <Table className="w-full">
+                    <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={7} className="h-full w-full flex items-center justify-center align-middle">
+                                <div className="flex flex-col items-center justify-center gap-4">
+                                    <Player
+                                        autoplay
+                                        loop
+                                        src={searchAnimation}
+                                        style={{ width: 450, height: 400 }}
+                                        className="mx-auto"
+                                    />
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </div>
+        );
+    }
+
     return (
         <div className="border rounded-md">
             <Table>
@@ -48,26 +74,24 @@ export function PatientsRegisters() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {isLoading ? (
-                        Array.from({ length: 10 }).map((_, index) => (
-                            <TableRow key={index}>
-                                <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-8" /></TableCell>
-                            </TableRow>
-                        ))
-                    ) : patients.length > 0 ? (
+                    {patients.length > 0 ? (
                         patients?.map((patient: Patient) => (
                             <PatientTableRow key={patient.id} patient={patient} />
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={7} className="text-center text-gray-500 py-8 font-medium text-base">
-                                Nenhum paciente foi encontrado.
+                            <TableCell colSpan={7} className="h-[400px] align-middle">
+                                <div className="flex flex-col items-center justify-center gap-4">
+                                    <UserX2 className="w-16 h-16 text-green-600" />
+                                    <div className="flex flex-col items-center gap-1">
+                                        <span className="text-lg font-semibold text-gray-700">
+                                            Nenhum paciente encontrado
+                                        </span>
+                                        <span className="text-sm text-gray-500">
+                                            Cadastre um novo paciente para começar
+                                        </span>
+                                    </div>
+                                </div>
                             </TableCell>
                         </TableRow>
                     )}
