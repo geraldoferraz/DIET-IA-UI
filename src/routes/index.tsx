@@ -1,6 +1,7 @@
 import { AppLayout } from "@/pages/_layout/app";
 import { AuthLayout } from "@/pages/_layout/auth";
 import { CreateAnamnese } from "@/pages/App/anamnese/create-anamnese";
+import { ChatPage } from "@/pages/App/chat/Chat";
 import { Dashboard } from "@/pages/App/dashboard/dashboard";
 import { PatientDetails } from "@/pages/App/patients/patientDetails";
 import { Patients } from "@/pages/App/patients/patients";
@@ -58,6 +59,14 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute allowedRoles={["user"]}>
                         <CreateAnamnese />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: "/chat",
+                element: (
+                    <ProtectedRoute allowedRoles={["user"]}>
+                        <ChatPage />
                     </ProtectedRoute>
                 )
             }
