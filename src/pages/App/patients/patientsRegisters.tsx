@@ -1,11 +1,10 @@
 import { findPatients } from "@/api/patients";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { queryClient } from "@/lib/react-query";
-import { Player } from "@lottiefiles/react-lottie-player";
 import { useQuery } from "@tanstack/react-query";
 import { UserX2 } from "lucide-react";
 import { useEffect } from "react";
-import searchAnimation from "../../../animation/searchAnimation.json";
 import { PatientTableRow } from "./patientTableRow";
 
 interface Patient {
@@ -38,21 +37,54 @@ export function PatientsRegisters() {
     if (isLoading) {
         return (
             <div className="border rounded-md">
-                <Table className="w-full">
-                    <TableBody>
+                <Table>
+                    <TableHeader>
                         <TableRow>
-                            <TableCell colSpan={7} className="h-full w-full flex items-center justify-center align-middle">
-                                <div className="flex flex-col items-center justify-center gap-4">
-                                    <Player
-                                        autoplay
-                                        loop
-                                        src={searchAnimation}
-                                        style={{ width: 450, height: 400 }}
-                                        className="mx-auto"
-                                    />
-                                </div>
-                            </TableCell>
+                            <TableHead className="w-[80px]"></TableHead>
+                            <TableHead>
+                                <Skeleton className="h-4 w-32" />
+                            </TableHead>
+                            <TableHead className="w-[300px]">
+                                <Skeleton className="h-4 w-40" />
+                            </TableHead>
+                            <TableHead className="w-[250px]">
+                                <Skeleton className="h-4 w-36" />
+                            </TableHead>
+                            <TableHead className="w-[250px]">
+                                <Skeleton className="h-4 w-32" />
+                            </TableHead>
+                            <TableHead className="w-[250px]">
+                                <Skeleton className="h-4 w-28" />
+                            </TableHead>
+                            <TableHead className="w-[100px]"></TableHead>
                         </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <TableRow key={i}>
+                                <TableCell>
+                                    <Skeleton className="h-8 w-8 rounded-full" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="h-4 w-40" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="h-4 w-48" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="h-4 w-32" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="h-4 w-28" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="h-4 w-36" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="h-8 w-20" />
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </div>
