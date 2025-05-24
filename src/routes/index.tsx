@@ -16,7 +16,11 @@ import { ProtectedRoute } from "./protectedRoutes";
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <Navigate to="/sign-in" replace />,
+        element: (
+            <ProtectedRoute allowedRoles={["user"]}>
+                <Navigate to="/home" replace />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/",

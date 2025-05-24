@@ -17,16 +17,14 @@ interface CreatePasswordFormData {
 }
 
 interface CreatePasswordPayload {
-    email: string;
-    cpf: string;
     password: string;
+    token: string;
 }
 
 export function CreatePassword() {
     const navigate = useNavigate();
     const { search } = useLocation();
-    const email = new URLSearchParams(search).get("email");
-    const cpf = new URLSearchParams(search).get("cpf");
+    const token = new URLSearchParams(search).get("token");
 
     const {
         register,
@@ -36,14 +34,14 @@ export function CreatePassword() {
 
     const createPasswordMutation = useMutation({
         mutationFn: async ({ password }: { password: string }) => {
-            if (!email || !cpf) {
-                throw new Error("Email ou CPF não fornecidos");
+            if (!token) {
+                toast.error("Erro ao criar senha. Tente novamente.");
+                return;
             }
 
             const payload: CreatePasswordPayload = {
-                email,
-                cpf,
-                password
+                password,
+                token,
             };
 
             return await createPassword(payload);

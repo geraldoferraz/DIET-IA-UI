@@ -23,7 +23,7 @@ export async function getPatientById(id: string): Promise<Patient> {
     return response.data;
 }
 
-export async function createPassword(data: { email: string; cpf: string; password: string }): Promise<void> {
+export async function createPassword(data: { token: string; password: string }): Promise<void> {
     const response = await api.post('/patient/create-password', data);
 
     return response.data;
